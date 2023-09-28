@@ -1,10 +1,17 @@
 package com.codepath.bestsellerlistapp
 
+import android.content.Intent
+import android.net.Uri
+import android.provider.ContactsContract.CommonDataKinds.Im
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.codepath.bestsellerlistapp.R.id
 
 /**
@@ -31,6 +38,11 @@ class BestSellerBooksRecyclerViewAdapter(
         var mItem: BestSellerBook? = null
         val mBookTitle: TextView = mView.findViewById<View>(id.book_title) as TextView
         val mBookAuthor: TextView = mView.findViewById<View>(id.book_author) as TextView
+        val ranking: TextView = mView.findViewById<View>(id.ranking) as TextView
+        val description: TextView = mView.findViewById<View>(id.book_description) as TextView
+        val bookImage: ImageView = mView.findViewById<View>(id.book_image) as ImageView
+        val buyButton: Button = mView.findViewById<Button>(id.buy_button) as Button
+
 
         override fun toString(): String {
             return mBookTitle.toString() + " '" + mBookAuthor.text + "'"
@@ -46,11 +58,19 @@ class BestSellerBooksRecyclerViewAdapter(
         holder.mItem = book
         holder.mBookTitle.text = book.title
         holder.mBookAuthor.text = book.author
+        holder.description.text = book.description
+        holder.ranking.text = book.rank.toString()
+//        holder.bookImage.s
+        Glide.with(holder.mView).load(book.bookImage).centerInside().into(holder.bookImage)
 
         holder.mView.setOnClickListener {
             holder.mItem?.let { book ->
                 mListener?.onItemClick(book)
             }
+        }
+        holder.buyButton.setOnClickListener {
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(book.amazonUrl))
+            startActivity(it.context, browserIntent, null)
         }
     }
 

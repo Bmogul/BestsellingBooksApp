@@ -1,5 +1,7 @@
 package com.codepath.bestsellerlistapp
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,6 +16,8 @@ import com.codepath.asynchttpclient.AsyncHttpClient
 import com.codepath.asynchttpclient.RequestParams
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler
 import com.codepath.bestsellerlistapp.R
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import okhttp3.Headers
 import org.json.JSONObject
 
@@ -78,9 +82,12 @@ class BestSellerBooksFragment : Fragment(), OnListFragmentInteractionListener {
                 //TODO - Parse JSON into Models
 
                 val resultJSON: JSONObject = json.jsonObject.get("results") as JSONObject
+                val booksRawJSON: String = resultJSON.get("books").toString()
 
+                val gson = Gson()
 
-                val models : List<BestSellerBook> = null // Fix me!
+                val arrayBookType = object : TypeToken<List<BestSellerBook>>(){}.type
+                val models : List<BestSellerBook> = gson.fromJson(booksRawJSON, arrayBookType) // Fix me!
                 recyclerView.adapter = BestSellerBooksRecyclerViewAdapter(models, this@BestSellerBooksFragment)
 
                 // Look for this in Logcat:
@@ -116,5 +123,11 @@ class BestSellerBooksFragment : Fragment(), OnListFragmentInteractionListener {
     override fun onItemClick(item: BestSellerBook) {
         Toast.makeText(context, "test: " + item.title, Toast.LENGTH_LONG).show()
     }
+
+//    fun onButtonClick(item: BestSellerBook){
+//        var url = item.amazonUrl
+//        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+//        startActivity(it.context, browserIntent, null)
+//    }
 
 }
